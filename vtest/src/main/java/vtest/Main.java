@@ -1,12 +1,21 @@
 package vtest;
 
+import com.koloboke.collect.map.IntIntMap;
+import com.koloboke.collect.map.hash.HashIntIntMaps;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import rawMap.IntIntMap4a;
 
 /**
  * Created by 37 on 2016/9/23.
@@ -20,6 +29,48 @@ public class Main {
 
         public Person(long id) {
             this.id = id;
+        }
+    }
+
+    static class KV {
+        int i;
+        int j;
+
+        public KV(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        public void setI(int i) {
+            this.i = i;
+        }
+
+        public void setJ(int j) {
+            this.j = j;
+        }
+
+        public int getI() {
+            return i;
+        }
+
+        public int getJ() {
+            return j;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            KV kv = (KV) o;
+
+            return i == kv.i;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return i;
         }
     }
 
@@ -65,6 +116,71 @@ public class Main {
         }
         //find2(persons, 100);
         System.out.println((System.nanoTime() - start) / 1000);
+
+        int count = 64;
+        Map<Integer, Integer> attributes1 = new HashMap<>(count);
+        Map<Integer, Integer> attributes2 = new HashMap<>(count);
+        List<KV> attribs1 = new ArrayList<>(count);
+        List<KV> attribs2 = new ArrayList<>(count);
+        Map<Integer, Integer> attribute1_kb = HashIntIntMaps.newMutableMap(count);
+        Map<Integer, Integer> attribute2_kb = HashIntIntMaps.newMutableMap(count);
+        for (int j = 0; j < count; j++) {
+            attributes1.put(j, j);
+            attributes2.put(j, j);
+            attribs1.add(new KV(j, j));
+            attribs2.add(new KV(j, j));
+            attribute1_kb.put(j, j);
+            attribute2_kb.put(j, j);
+        }
+
+        start = System.nanoTime();
+        Map<Integer, Integer> attributes = new HashMap<>(count);
+        attributes.putAll(attributes2);
+        for (Map.Entry<Integer, Integer> entry : attributes1.entrySet()) {
+            Integer key = entry.getKey();
+            Integer v2 = attributes.get(key);
+            if (v2 != null) {
+                attributes.put(key, entry.getValue() + v2);
+            } else {
+                attributes.put(key, entry.getValue());
+            }
+        }
+        System.out.println((System.nanoTime() - start) / 1000 + " size=" + attributes.size());
+
+
+        start = System.nanoTime();
+        Map<Integer, Integer> attributes_stream = new HashMap<>(attributes1);
+        attributes2.forEach((k, v) -> attributes_stream.merge(k, v, (integer, integer2) -> integer + integer2));
+        System.out.println((System.nanoTime() - start) / 1000);
+
+        start = System.nanoTime();
+        Map<Integer, Integer> attributes_kb = HashIntIntMaps.newMutableMap(count);
+        attributes_kb.putAll(attribute2_kb);
+        for (Map.Entry<Integer, Integer> entry : attribute1_kb.entrySet()) {
+            Integer key = entry.getKey();
+            Integer v2 = attributes_kb.get(key);
+            if (v2 != null) {
+                attributes_kb.put(key, entry.getValue() + v2);
+            } else {
+                attributes_kb.put(key, entry.getValue());
+            }
+        }
+        System.out.println((System.nanoTime() - start) / 1000 + " size=" + attributes_kb.size());
+
+
+//        start = System.nanoTime();
+//        List<KV> attribs = new ArrayList<>(50);
+//        attribs.addAll(attribs2);
+//        for (KV kv : attribs1) {
+//            int index = attribs.indexOf(kv);
+//            if(-1 == index) {
+//                attribs.add(kv);
+//            } else {
+//                KV kv2 = attribs.get(index);
+//                kv2.setJ(kv2.getJ() + kv.getJ());
+//            }
+//        }
+//        System.out.println((System.nanoTime() - start) / 1000 + " size=" + attribs.size());
     }
 
     private static Person find(List<Person> persons, int id) {
