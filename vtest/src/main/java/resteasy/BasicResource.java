@@ -18,4 +18,8 @@ public interface BasicResource {
         CompletableFuture<R> completableFuture = CompletableFuture.supplyAsync(supplier, executor);
         return completableFuture.get();
     }
+
+    default void executeUnblockAsync(Runnable runnable) {
+        CompletableFuture.runAsync(runnable, executor);
+    }
 }
