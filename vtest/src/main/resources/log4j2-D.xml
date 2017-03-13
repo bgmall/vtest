@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="300">
+    <properties>
+        <property name="ASYNC_LOG_HOME">logs</property>
+        <property name="ASYNC_FILE_NAME">myasynclog</property>
+    </properties>
+    <Appenders>
+        <RollingRandomAccessFile name="myAsyncFile"
+                                 fileName="${ASYNC_LOG_HOME}/${ASYNC_FILE_NAME}.log"
+                                 filePattern="${ASYNC_LOG_HOME}/$${date:yyyy-MM}/${ASYNC_FILE_NAME}-%d{yyyy-MM-dd HH}-%i.log">
+            <PatternLayout
+                    pattern="%msg%n"/>
+            <!-- 备份策略:满足其中一个就可以启动备份-->
+            <Policies>
+                <!-- interval 多久执行一次备份，单位为 RollingRandomAccessFile的属性filePattern中%d{yyyy-MM-dd}的最小时间单位，此处是天-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <!-- 默认的备份策略：max="7"表示最多只保留7份日志，fileIndex属性是在拥有多个备份日志的时候，命令是以递增的数为文件名，max值时值大的文件是最新的内容，min值时值大的是最久的内容-->
+            <DefaultRolloverStrategy fileIndex="max" max="7">
+                <!-- 删除指定目录下60天之前的日志-->
+                <Delete basePath="${ASYNC_LOG_HOME}" maxDepth="2">
+                    <!--<IfFileName glob="*/app-*.log.gz" />-->
+                    <IfLastModified age="60d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="myAsyncLog" level="info" additivity="false">
+            <AppenderRef ref="myAsyncFile"/>
+        </AsyncLogger>
+    </Loggers>
+</Configuration>

@@ -1,5 +1,6 @@
 package resteasy;
 
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
 import org.jboss.resteasy.plugins.server.embedded.SimpleSecurityDomain;
@@ -40,6 +41,7 @@ public class JDKHttpServer {
         httpContextBuilder.getDeployment().getDefaultContextObjects().put(Executor.class, executor);
         httpContextBuilder.getDeployment().getActualResourceClasses().add(SimpleResource.class);
         httpContextBuilder.bind(httpServer);
+        HttpContext context = httpServer.createContext("/");
         httpServer.start();
     }
 
