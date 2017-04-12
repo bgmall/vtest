@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="300">
+    <properties>
+        <property name="ASYNC_LOG_HOME">logs</property>
+        <property name="ASYNC_FILE_NAME">myasynclog</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n">
+            </PatternLayout>
+        </Console>
+        <RollingFile name="myAsyncFile"
+                     filePattern="${ASYNC_LOG_HOME}/%d{yyyy-MM-dd}/${ASYNC_FILE_NAME}.%d{yyyy-MM-dd}.log">
+            <PatternLayout
+                    pattern="%msg%n"/>
+            <Policies>
+                <!--&lt;!&ndash; interval 多久执行一次备份，单位为 RollingRandomAccessFile的属性filePattern中%d{yyyy-MM-dd}的最小时间单位，此处是天&ndash;&gt;-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="myAsyncFile"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
