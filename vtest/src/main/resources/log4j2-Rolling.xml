@@ -10,13 +10,14 @@
             </PatternLayout>
         </Console>
         <RollingFile name="myAsyncFile"
-                     filePattern="${ASYNC_LOG_HOME}/%d{yyyy-MM-dd}/${ASYNC_FILE_NAME}.%d{yyyy-MM-dd}.log">
+                     filePattern="${ASYNC_LOG_HOME}/${ASYNC_FILE_NAME}.%d{yyyy-MM-dd}.log">
             <PatternLayout
                     pattern="%msg%n"/>
             <Policies>
                 <!--&lt;!&ndash; interval 多久执行一次备份，单位为 RollingRandomAccessFile的属性filePattern中%d{yyyy-MM-dd}的最小时间单位，此处是天&ndash;&gt;-->
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <TimeBasedTriggeringPolicy interval="1" />
             </Policies>
+            <DirectWriteRolloverStrategy />
         </RollingFile>
     </Appenders>
 

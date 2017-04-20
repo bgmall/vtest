@@ -1,11 +1,11 @@
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 import org.junit.Test;
-import service.annotations.ComponentAnno;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
+
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
+import service.annotations.ComponentAnno;
 
 /**
  * Created by 37 on 2016/9/27.
