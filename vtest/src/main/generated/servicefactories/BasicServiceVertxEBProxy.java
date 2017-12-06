@@ -64,20 +64,9 @@ public class BasicServiceVertxEBProxy implements BasicService {
     } catch (IllegalStateException ex) {}
   }
 
-  public void call(String key) {
-    if (closed) {
-      throw new IllegalStateException("Proxy is closed");
-    }
-    JsonObject _json = new JsonObject();
-    _json.put("key", key);
-    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "call");
-    _vertx.eventBus().send(_address, _json, _deliveryOptions);
-  }
-
   public void find(JsonObject document, Handler<AsyncResult<JsonObject>> resultHandler) {
     if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+    resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
@@ -95,7 +84,7 @@ public class BasicServiceVertxEBProxy implements BasicService {
 
   public void hello(String key, Handler<AsyncResult<String>> resultHandler) {
     if (closed) {
-      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+    resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
@@ -109,6 +98,17 @@ public class BasicServiceVertxEBProxy implements BasicService {
         resultHandler.handle(Future.succeededFuture(res.result().body()));
       }
     });
+  }
+
+  public void call(String key) {
+    if (closed) {
+    throw new IllegalStateException("Proxy is closed");
+  }
+    JsonObject _json = new JsonObject();
+    _json.put("key", key);
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "call");
+    _vertx.eventBus().send(_address, _json, _deliveryOptions);
   }
 
 

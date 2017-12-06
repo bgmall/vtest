@@ -122,18 +122,18 @@ public class BasicServiceVertxProxyHandler extends ProxyHandler {
       }
       accessed();
       switch (action) {
-        case "call": {
-          service.call((java.lang.String)json.getValue("key"));
-          break;
-        }
+
 
         case "find": {
           service.find((io.vertx.core.json.JsonObject)json.getValue("document"), createHandler(msg));
           break;
         }
-
         case "hello": {
           service.hello((java.lang.String)json.getValue("key"), createHandler(msg));
+          break;
+        }
+        case "call": {
+          service.call((java.lang.String)json.getValue("key"));
           break;
         }
         default: {
